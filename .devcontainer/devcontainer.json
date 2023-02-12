@@ -1,0 +1,11 @@
+{
+	"name": "Java 8, Gradle & C++, CMake",
+	"image": "mcr.microsoft.com/devcontainers/cpp:debian-11",
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "8",
+			"installGradle": "true",
+			"installMaven": "false"
+		}
+	}
+}
