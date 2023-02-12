@@ -23,7 +23,6 @@
 hs_err_pid*
 
 # Custom
-TeamCode/src/main/java/org/firstinspires/ftc/teamcode/*
-TeamCode/src/main/assets/*
+# TeamCode/
 temp.txt
-repos/*
+# repos/*

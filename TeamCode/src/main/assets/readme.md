@@ -1,0 +1,2 @@
+## assets
+Store assets here.
