@@ -1,0 +1,6 @@
+Helpful Commands
+
+cd tui/build && cmake ../..
+./gradlew run
+
+git log --pretty=format:"%h%x09%ad%x09%B" --date=short --graph
