@@ -62,6 +62,5 @@ hs_err_pid*
 build
 
 # Custom
-TeamCode/
 temp.txt
-repos/
+bin/

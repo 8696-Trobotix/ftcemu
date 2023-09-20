@@ -1,11 +1,14 @@
 {
-	"name": "Java 8, Gradle & C++, CMake",
-	"image": "mcr.microsoft.com/devcontainers/cpp:debian-11",
+	"name": "C++",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "8",
-			"installGradle": "true",
+			"installGradle": "false",
 			"installMaven": "false"
 		}
-	}
+	},
+	"postCreateCommand": "g++ --version && java -version"
 }
