@@ -25,4 +25,4 @@ def stdin_reset():
     print("Reset terminal state.")
 
 def getch() -> str:
-    return os.read(sys.stdin.fileno(), 1)
+    return str(os.read(sys.stdin.fileno(), 1), encoding="utf8")

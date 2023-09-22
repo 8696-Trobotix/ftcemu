@@ -223,5 +223,6 @@ hs_err_pid*
 build
 
 # Custom
-temp.txt
+__extract__
 bin/
+temp.txt

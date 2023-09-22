@@ -10,8 +10,25 @@ def reset_term_state():
 
 def main():
     terminal.stdin_immediate()
-    while (test := terminal.getch()) != b'q':
-        print("Character:", test)
+
+    print("""
+Daemon started.
+
+0 - Extract and Run
+1 - Extract
+2 - Run
+q - Quit
+""")
+
+    while (option := terminal.getch()) != 'q':
+        match option:
+            case '0':
+                launch.extract()
+                launch.run()
+            case '1':
+                launch.extract()
+            case '2':
+                launch.run()
 
 if __name__ == "__main__":
     main()
