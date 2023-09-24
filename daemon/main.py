@@ -23,11 +23,11 @@ q - Quit
     while (option := terminal.getch()) != 'q':
         match option:
             case '0':
-                launch.extract()
                 launch.run()
             case '1':
                 launch.extract()
             case '2':
+                launch.extract()
                 launch.run()
 
 if __name__ == "__main__":

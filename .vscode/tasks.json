@@ -7,7 +7,7 @@
             "command": "python",
             "args": [
                 "./daemon/main.py",
-                "./FtcRobotController/TeamCode/src/main/java/org/firstinspires/ftc/teamcode"
+                "./repos/FtcRobotController/TeamCode/src/main/java/org/firstinspires/ftc/teamcode"
             ],
             "group": {
                 "kind": "build",
