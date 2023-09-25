@@ -14,20 +14,24 @@ def main():
     print("""
 Daemon started.
 
-0 - Extract and Run
+0 - Extract, Embed, and Run
 1 - Extract
-2 - Run
+2 - Embed
+3 - Run
 q - Quit
 """)
 
     while (option := terminal.getch()) != 'q':
         match option:
             case '0':
+                launch.extract()
+                launch.embed()
                 launch.run()
             case '1':
                 launch.extract()
             case '2':
-                launch.extract()
+                launch.embed()
+            case '3':
                 launch.run()
 
 if __name__ == "__main__":
