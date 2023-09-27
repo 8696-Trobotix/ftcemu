@@ -31,7 +31,7 @@ def extract():
             src_file_content = open(f"{directory}/{src_file}", "r").readlines()
             capture = False
             for line in src_file_content:
-                processed = line.replace(" ", "").casefold().rstrip()
+                processed = str_collapse(line)
                 if processed[:delimiter_start_len] == delimiter_start:
                     print("Writing:", processed[delimiter_start_len:])
                     capture = True
@@ -43,7 +43,7 @@ def extract():
     extracted = True
     print("Extract complete.")
 
-def embed():
+def embed(): # Requires heavy refactoring and revision.
     global extracted
     if not extracted:
         print("Must extract before embedding.")
@@ -53,7 +53,7 @@ def embed():
     label = ""
     block = []
     for line in data_raw:
-        processed = line.replace(" ", "").casefold().rstrip()
+        processed = str_collapse(line)
         if processed[:delimiter_start_len] == delimiter_start:
             label = processed[delimiter_start_len:]
             block.clear()
@@ -84,6 +84,42 @@ def embed():
                     selections.remove(key_select)
         printOptions(keys, index, selections)
     print("Embedding:", *(x for x in selections))
+    inline = open("./daemon/template/inline.txt").read()
+    main_content = ""
+    for selection in selections:
+        block = data_reprocessed[selection]
+        for line in block:
+            key_words = [
+                "public",
+                "private",
+                "class",
+                "enum"
+            ]
+            add_debug = True
+            for key_word in key_words:
+                if line.lstrip()[:len(key_word)] == key_word:
+                    add_debug = False
+                    break
+            if add_debug:
+                main_content += inline.replace("`ln`", "\"" + line.rstrip().replace("\"", "\\\"") + "\"") + "; "
+            main_content += line.lstrip()
+    main_in = open("./daemon/template/Main.java", "r").read()
+    main_processed = main_in.replace("// INS", main_content)
+    try:
+        main_out = open(f"{extract_path}/{java_file_name}", "w")
+    except:
+        main_out = open(f"{extract_path}/{java_file_name}", "x")
+    main_out.write(main_processed)
+    copy_paths = [
+        "./daemon/template/Terminal.java",
+        "./addon/*"
+    ]
+    for path in copy_paths:
+        os.system(f"cp -r {path} {extract_path}")
+    print("Embed complete.")
+
+def str_collapse(s: str) -> str:
+    return s.replace(" ", "").casefold().rstrip()
 
 def printOptions(options: list[str], index, chosen):
     options_len = len(options)
