@@ -12,8 +12,10 @@ java_compiled_name = "Main.class"
 delimiter_start = "//ftcemustart"
 delimiter_end = "//ftcemuend"
 delimiter_start_len = len(delimiter_start)
+terminal_indicator = "// Terminal"
 
 extracted = False
+saved_config = {}
 
 def extract():
     global extracted
@@ -85,26 +87,41 @@ def embed(): # Requires heavy refactoring and revision.
         printOptions(keys, index, selections)
     print("Embedding:", *(x for x in selections))
     inline = open("./daemon/template/inline.txt").read()
-    main_content = ""
+    main_content = class_content = global_content = ""
     for selection in selections:
+        if not selection in saved_config:
+            print(f"Select scope for {selection}. [G] for global, [C] for class, all else is local within main: ")
+            c = terminal.getch().casefold()
+            if c == 'g':
+                saved_config[selection] = "global"
+            elif c == 'c':
+                saved_config[selection] = "class"
+            else:
+                saved_config[selection] = "local"
         block = data_reprocessed[selection]
-        for line in block:
-            key_words = [
-                "public",
-                "private",
-                "class",
-                "enum"
-            ]
-            add_debug = True
-            for key_word in key_words:
-                if line.lstrip()[:len(key_word)] == key_word:
-                    add_debug = False
-                    break
-            if add_debug:
-                main_content += inline.replace("`ln`", "\"" + line.rstrip().replace("\"", "\\\"") + "\"") + "; "
-            main_content += line.lstrip()
+        scope = saved_config[selection]
+        match scope:
+            case "local":
+                for line in block:
+                    if line.lstrip()[:len(terminal_indicator)] == terminal_indicator:
+                        main_content += line.lstrip()[3:]
+                        continue
+                    main_content += inline.replace("`ln`", "\"" + line.strip().replace("\"", "\\\"") + "\"") + "; "
+                    main_content += line.lstrip()
+            case "class":
+                for line in block:
+                    if line.lstrip()[:len(terminal_indicator)] == terminal_indicator:
+                        class_content += line.lstrip()[3:]
+                        continue
+                    class_content += line
+            case "global":
+                for line in block:
+                    if line.lstrip()[:len(terminal_indicator)] == terminal_indicator:
+                        global_content += line.lstrip()[3:]
+                        continue
+                    global_content += line
     main_in = open("./daemon/template/Main.java", "r").read()
-    main_processed = main_in.replace("// INS", main_content)
+    main_processed = main_in.replace("// LOCAL", main_content).replace("// CLASS", class_content).replace("// GLOBAL", global_content)
     try:
         main_out = open(f"{extract_path}/{java_file_name}", "w")
     except:
@@ -130,11 +147,12 @@ def printOptions(options: list[str], index, chosen):
 def run():
     print("Running...")
     print("JAVAC")
-    if not os.path.exists(f"{extract_path}/{java_compiled_name}"):
-        subprocess.run([
-            "javac",
-            f"{extract_path}/{java_file_name}"
-        ])
+    # if not os.path.exists(f"{extract_path}/{java_compiled_name}"):
+    subprocess.run([
+        "javac",
+        "-classpath", f"{extract_path}",
+        f"{extract_path}/{java_file_name}"
+    ])
     print("JAVA")
     subprocess.run([
         "java",
